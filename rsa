@@ -14,7 +14,7 @@ def factor_rsa(n):
 
     # Check if q is prime
     if is_prime(q):
-        return f"{n}={p}*{q}"
+        return "{}={}*{}".format(n, p, q)
     else:
         # If q is not prime, try the next prime factor of n
         return factor_rsa(n // p)
