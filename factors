@@ -19,7 +19,7 @@ if __name__ == '__main__':
             for line in f:
                 n = int(line.strip())
                 p, q = factorize(n)
-                print(f"{n}={p}*{q}")
-    except FileNotFoundError:
-        print(f"File not found: {filename}")
+                print("{}={}*{}".format(n, p, q))
+    except IOError:
+        print("File not found: {}".format(filename))
         sys.exit(1)
