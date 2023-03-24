@@ -2,7 +2,7 @@
 
 import sys
 from math import sqrt
-from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Pool
 
 # Precompute list of primes up to sqrt(max_n)
 def sieve(max_n):
@@ -41,10 +41,10 @@ if __name__ == '__main__':
         with open(filename) as f:
             max_n = max(int(line.strip()) for line in f)
             primes = sieve(int(sqrt(max_n)))
-            with ThreadPoolExecutor(max_workers=8) as executor:
-                results = [executor.submit(factorize, int(line.strip())) for line in f]
+            with Pool() as pool:
+                results = [pool.apply_async(factorize, args=(int(line.strip()),)) for line in f]
                 for i, result in enumerate(results):
-                    factors = result.result()
+                    factors = result.get()
                     n = int(f.readline().strip())
                     print("{}={}".format(n, "*".join(str(f) for f in factors)))
     except IOError:
