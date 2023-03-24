@@ -3,10 +3,17 @@
 import sys
 
 def factorize(n):
-    for i in range(2, int(n**0.5)+1):
+    factors = []
+    i = 2
+    while i*i <= n:
         if n % i == 0:
-            return [i] + factorize(n//i)
-    return [n]
+            factors.append(i)
+            n //= i
+        else:
+            i += 1
+    if n > 1:
+        factors.append(n)
+    return factors
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
