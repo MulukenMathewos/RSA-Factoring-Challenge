@@ -1,33 +1,18 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import sys
-from math import sqrt
-from multiprocessing import Pool, Manager
 
-# Precompute list of primes up to sqrt(max_n)
-def sieve(max_n, primes):
-    primes[0] = primes[1] = False
-    for i in range(2, int(sqrt(max_n)) + 1):
-        if primes[i]:
-            for j in range(i*i, max_n + 1, i):
-                primes[j] = False
-    return [i for i in range(max_n + 1) if primes[i]]
-
-# Memoize factorizations
-factorizations = {}
-def factorize(n, primes):
-    if n in factorizations:
-        return factorizations[n]
+def factorize(n):
     factors = []
-    for p in primes:
-        if p*p > n:
-            break
-        while n % p == 0:
-            factors.append(p)
-            n //= p
+    i = 2
+    while i*i <= n:
+        if n % i == 0:
+            factors.append(i)
+            n //= i
+        else:
+            i += 1
     if n > 1:
         factors.append(n)
-    factorizations[n] = factors
     return factors
 
 if __name__ == '__main__':
@@ -38,17 +23,10 @@ if __name__ == '__main__':
     filename = sys.argv[1]
     try:
         with open(filename) as f:
-            max_n = max(int(line.strip()) for line in f)
-            manager = Manager()
-            primes = manager.list([True] * (int(sqrt(max_n)) + 1))
-            sieve(int(sqrt(max_n)), primes)
-            with Pool() as pool:
-                results = [pool.apply_async(factorize, args=(int(line.strip()), primes)) for line in f]
-                for i, result in enumerate(results):
-                    factors = result.get()
-                    f.seek(0)
-                    n = int(f.readlines()[i].strip())
-                    print("{}={}".format(n, "*".join(str(f) for f in factors)))
+            for line in f:
+                n = int(line.strip())
+                factors = factorize(n)
+                print("{}={}".format(n, "*".join(str(f) for f in factors)))
     except IOError:
         print("File not found: {}".format(filename))
         sys.exit(1)
