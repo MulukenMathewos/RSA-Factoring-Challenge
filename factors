@@ -40,7 +40,9 @@ if __name__ == '__main__':
         with open(filename) as f:
             max_n = max(int(line.strip()) for line in f)
             manager = Manager()
-            primes = manager.list([True] * (int(sqrt(max_n)) + 1))
+            primes = manager.list()
+            for i in range(int(sqrt(max_n)) + 1):
+                primes.append(True)
             sieve(int(sqrt(max_n)), primes)
             with Pool() as pool:
                 results = [pool.apply_async(factorize, args=(int(line.strip()), primes)) for line in f]
